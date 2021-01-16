@@ -1,0 +1,62 @@
+---
+title: "Assignment 1"
+author: "Esther Shalini Rajasekaran"
+date: "January 29, 2021"
+abstract:
+data:"Daily Shelter Occupancy - 2020"
+references:https://open.toronto.ca/dataset/daily-shelter-occupancy/
+---
+#loading packages
+```{r}
+install.packages("tidyverse")
+install.packages("janitor")
+install.packages("here")
+install.packages("jsonlite")
+install.packages("opendatatoronto")
+library(tidyverse)
+library(janitor)
+library(here)
+library(jsonlite)
+library(opendatatoronto)
+```
+#Citation packages
+```{r}
+citation("tidyverse")
+citation("janitor")
+citation("here")
+citation("jsonlite")
+citation("opendatatoronto")
+```
+#Reading data
+```{r}
+package <- show_package("8a6eceb2-821b-4961-a29d-758f3087732d")
+resources <- list_package_resources("8a6eceb2-821b-4961-a29d-758f3087732d")
+View(resources)
+datastore_resources <- filter(resources, tolower(format) %in% c('csv', 'geojson'))
+View(datastore_resources)
+datashelter2020 <- filter(datastore_resources, row_number()==1) %>% get_resource()
+```
+#summarize data
+```{r}
+
+```
+
+
+#selecting columns for analysis
+```{r}
+datashelter2020 %>% select(1,3,5,10,11,12)
+```
+
+```{r}
+dailyshelteroccupancy2020 %>% group_by(OCCUPANCY_DATE) %>% summarise(TOTALOCCUPANCY = sum(OCCUPANCY),TOTALCAPACITY = sum(CAPACITY))
+```
+
+#Group by sector
+```{r}
+dailyshelteroccupancy2020 %>% group_by(SECTOR) %>% summarise(TOTALOCCUPANCY = sum(OCCUPANCY),TOTALCAPACITY = sum(CAPACITY),DIFFERENCE = TOTALCAPACITY - TOTALOCCUPANCY)
+```
+#Make a graph
+```{r}
+dailyshelteroccupancy2020 %>% group_by(SECTOR) %>% summarise(TOTALOCCUPANCY = sum(OCCUPANCY),TOTALCAPACITY = sum(CAPACITY),DIFFERENCE = TOTALCAPACITY - TOTALOCCUPANCY) %>% ggplot(aes(x = dailyshelteroccupancy2020$OCCUPANCY,y = dailyshelteroccupancy2020$CAPACITY,color = SECTOR))+geom_point()
+```
+
